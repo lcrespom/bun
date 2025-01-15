@@ -106,7 +106,7 @@ JSC_DEFINE_HOST_FUNCTION(jsFunctionIsSymbolObject,
     return JSValue::encode(
         jsBoolean(globalObject->symbolObjectStructure() == cell->structure()));
 }
-JSC_DEFINE_HOST_FUNCTION(jsFunctionIsNativeError,
+JSC_DEFINE_HOST_FUNCTION(jsFunctionIsError,
     (JSC::JSGlobalObject * globalObject,
         JSC::CallFrame* callframe))
 {
@@ -121,6 +121,7 @@ JSC_DEFINE_HOST_FUNCTION(jsFunctionIsNativeError,
 
         // node util.isError relies on toString
         // https://github.com/nodejs/node/blob/cf8c6994e0f764af02da4fa70bc5962142181bf3/doc/api/util.md#L2923
+        // util.isError is deprecated and removed in node 23
         PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
         if (object->getPropertySlot(globalObject,
                 vm.propertyNames->toStringTagSymbol, slot)) {
@@ -139,6 +140,18 @@ JSC_DEFINE_HOST_FUNCTION(jsFunctionIsNativeError,
 
         JSValue proto = object->getPrototype(vm, globalObject);
         if (proto.isCell() && (proto.inherits<JSC::ErrorInstance>() || proto.asCell()->type() == ErrorInstanceType || proto.inherits<JSC::ErrorPrototype>()))
+            return JSValue::encode(jsBoolean(true));
+    }
+
+    return JSValue::encode(jsBoolean(false));
+}
+JSC_DEFINE_HOST_FUNCTION(jsFunctionIsNativeError,
+    (JSC::JSGlobalObject * globalObject,
+        JSC::CallFrame* callframe))
+{
+    GET_FIRST_VALUE
+    if (value.isCell()) {
+        if (value.inherits<JSC::ErrorInstance>() || value.asCell()->type() == ErrorInstanceType)
             return JSValue::encode(jsBoolean(true));
     }
 
@@ -467,7 +480,7 @@ namespace Zig {
 // Hardcoded module "node:util/types"
 DEFINE_NATIVE_MODULE(NodeUtilTypes)
 {
-    INIT_NATIVE_MODULE(44);
+    INIT_NATIVE_MODULE(45);
 
     putNativeFn(Identifier::fromString(vm, "isExternal"_s), jsFunctionIsExternal);
     putNativeFn(Identifier::fromString(vm, "isDate"_s), jsFunctionIsDate);
@@ -478,6 +491,7 @@ DEFINE_NATIVE_MODULE(NodeUtilTypes)
     putNativeFn(Identifier::fromString(vm, "isStringObject"_s), jsFunctionIsStringObject);
     putNativeFn(Identifier::fromString(vm, "isSymbolObject"_s), jsFunctionIsSymbolObject);
     putNativeFn(Identifier::fromString(vm, "isNativeError"_s), jsFunctionIsNativeError);
+    putNativeFn(Identifier::fromString(vm, "_deprecatedIsError"_s), jsFunctionIsError);
     putNativeFn(Identifier::fromString(vm, "isRegExp"_s), jsFunctionIsRegExp);
     putNativeFn(Identifier::fromString(vm, "isAsyncFunction"_s), jsFunctionIsAsyncFunction);
     putNativeFn(Identifier::fromString(vm, "isGeneratorFunction"_s), jsFunctionIsGeneratorFunction);

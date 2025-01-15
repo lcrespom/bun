@@ -124,7 +124,7 @@ function isObject(arg) {
   return typeof arg === "object" && arg !== null;
 }
 var isDate = types.isDate;
-var isError = types.isNativeError;
+var isError = types._deprecatedIsError;
 function isPrimitive(arg) {
   return (
     arg === null ||
