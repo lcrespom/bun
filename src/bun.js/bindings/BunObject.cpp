@@ -604,7 +604,8 @@ JSC_DEFINE_HOST_FUNCTION(functionFileURLToPath, (JSC::JSGlobalObject * globalObj
             url = WTF::URL(arg0.toWTFString(globalObject));
             RETURN_IF_EXCEPTION(scope, {});
         } else {
-            throwTypeError(globalObject, scope, "Argument must be a URL"_s);
+            Bun::ERR::INVALID_ARG_TYPE(scope, globalObject, "url"_s, "string"_s, arg0);
+            // throwTypeError(globalObject, scope, "Argument must be a URL"_s);
             return {};
         }
     } else {
@@ -612,7 +613,9 @@ JSC_DEFINE_HOST_FUNCTION(functionFileURLToPath, (JSC::JSGlobalObject * globalObj
     }
 
     if (UNLIKELY(!url.protocolIsFile())) {
-        throwTypeError(globalObject, scope, "Argument must be a file URL"_s);
+        // throwTypeError(globalObject, scope, "Argument must be a file URL"_s);
+        Bun::ERR::INVALID_URL_SCHEME(scope, globalObject, "file"_s);
+        // Bun::ERR:ErrorCode::ERR_INVALID_URL
         return {};
     }
 

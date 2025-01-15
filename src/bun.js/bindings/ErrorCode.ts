@@ -41,6 +41,7 @@ export default [
   ["MODULE_NOT_FOUND", Error],
   ["ERR_ILLEGAL_CONSTRUCTOR", TypeError],
   ["ERR_INVALID_URL", TypeError],
+  ["ERR_INVALID_URL_SCHEME", TypeError],
   ["ERR_BUFFER_TOO_LARGE", RangeError],
   ["ERR_BROTLI_INVALID_PARAM", RangeError],
   ["ERR_UNKNOWN_ENCODING", TypeError],

@@ -132,6 +132,17 @@ pub fn extractedSplitNewLinesFastPathStringsOnly(globalThis: *JSC.JSGlobalObject
     };
 }
 
+extern fn Bun__util__isInsideNodeModules(globalObject: *JSC.JSGlobalObject, callFrame: *JSC.CallFrame) bool;
+pub fn isInsideNodeModules(globalObject: *JSC.JSGlobalObject, callframe: *JSC.CallFrame) bun.JSError!JSC.JSValue {
+    const res = Bun__util__isInsideNodeModules(globalObject, callframe);
+    return JSC.JSValue.jsBoolean(res);
+}
+
+// pub const isInsideNodeModules = Bun__util__isInsideNodeModules;
+// pub fn isInsideNodeModules(globalThis: *JSC.JSGlobalObject, callframe: *JSC.CallFrame) bun.JSError!JSC.JSValue {
+//     // globalThis.vm().
+//     const caller = callframe.getCallerSrcLoc();
+// }
 fn split(
     comptime encoding: bun.strings.EncodingNonAscii,
     globalThis: *JSC.JSGlobalObject,
